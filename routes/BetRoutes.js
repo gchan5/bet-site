@@ -61,22 +61,20 @@ module.exports = function(app) {
         res.sendStatus(200);
     });
 
-    app.post('/api/bet/addUsers', (req, res) => {
+    app.post('/api/bet/addOracle', (req, res) => {
         var {
-            betters,
+            oracle,
             bet
         } = req.body;
 
-        betters = betters.map(better => mongoose.Types.ObjectId(better));
+        oracle = mongoose.Types.ObjectId(oracle);
         bet = mongoose.Types.ObjectId(bet);
 
-        betters.forEach(function(better) {
-            Bet.findById(this.bet, { $addToSet : { betters : better }});
-            User.findById(better, { $addToSet : { ownedBets : this.bet }})
-        }, this);
+        Bet.update({ _id: bet }, { "oracle" : oracle }).exec();
+        User.update({ _id: oracle }, { $addToSet : { "oracledBets" : bet } }).exec();
 
         res.sendStatus(200);
-    });
+    })
 
     app.delete('/api/bet', (req, res) => {
         var {
