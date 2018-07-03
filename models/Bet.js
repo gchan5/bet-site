@@ -8,7 +8,11 @@ const BetSchema = new Schema({
     betters: [Schema.Types.ObjectId],
     possibleOutcomes: [Number],
     outcome: Number,
-    finished: Boolean
+    finished: Boolean,
+    betAmounts: {
+        type: Map,
+        of: Number
+    }
 });
 
 module.exports = mongoose.model('Bet', BetSchema);
