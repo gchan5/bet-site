@@ -18,7 +18,8 @@ module.exports = function(app) {
             betters,
             possibleOutcomes,
             outcome,
-            finished
+            finished,
+            betAmounts
         } = req.body;
 
         owner = mongoose.Types.ObjectId(owner);
@@ -32,7 +33,8 @@ module.exports = function(app) {
             betters,
             possibleOutcomes,
             outcome,
-            finished
+            finished,
+            betAmounts
         });
 
         bet.save().then(function(savedBet) {
@@ -49,14 +51,21 @@ module.exports = function(app) {
     app.post('/api/bet/addUser', (req, res) => {
         var {
             better,
-            bet
+            bet,
+            betAmount
         } = req.body;
 
-        better = mongoose.Types.ObjectId(better);
+        var betId = mongoose.Types.ObjectId(better);
+
         bet = mongoose.Types.ObjectId(bet);
 
-        Bet.update({ _id: bet }, { $addToSet : { "betters" : better } }).exec();
-        User.update({ _id: better }, { $addToSet : { "activeBets" : bet } }).exec();
+        Bet.update({ _id: bet }, { $addToSet : { "betters" : betId } }).exec();
+        User.update({ _id: betId }, { $addToSet : { "activeBets" : bet } }).exec();
+
+        Bet.findById(bet, function(err, foundBet) {
+            foundBet.betAmounts.set(better, betAmount);
+            foundBet.save();
+        });
 
         res.sendStatus(200);
     });
