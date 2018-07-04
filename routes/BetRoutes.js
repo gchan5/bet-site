@@ -103,4 +103,26 @@ module.exports = function(app) {
 
         res.sendStatus(200);
     });
+
+    app.post('/api/bet/chooseOutcome', (req, res) => {
+        var {
+            user,
+            bet,
+            outcome
+        } = req.body;
+
+        user = mongoose.Types.ObjectId(user);
+        bet = mongoose.Types.ObjectId(bet);
+
+        var foundBet = Bet.findById(bet);
+
+        if(!foundBet) {
+            res.sendStatus(404);
+            return;
+        }
+
+        if(foundBet.oracle != user) {
+            res.sendStatus(404);
+        }
+    });
 }
