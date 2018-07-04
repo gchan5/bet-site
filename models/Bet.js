@@ -12,6 +12,10 @@ const BetSchema = new Schema({
     betAmounts: {
         type: Map,
         of: Number
+    },
+    userBets: {
+        type: Map,
+        of: Schema.Types.ObjectId
     }
 });
 

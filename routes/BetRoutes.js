@@ -19,7 +19,8 @@ module.exports = function(app) {
             possibleOutcomes,
             outcome,
             finished,
-            betAmounts
+            betAmounts,
+            outcomeAmounts
         } = req.body;
 
         owner = mongoose.Types.ObjectId(owner);
@@ -34,7 +35,7 @@ module.exports = function(app) {
             possibleOutcomes,
             outcome,
             finished,
-            betAmounts
+            userBets
         });
 
         bet.save().then(function(savedBet) {
@@ -52,7 +53,8 @@ module.exports = function(app) {
         var {
             better,
             bet,
-            betAmount
+            betAmount,
+            outcome
         } = req.body;
 
         var betId = mongoose.Types.ObjectId(better);
@@ -64,6 +66,7 @@ module.exports = function(app) {
 
         Bet.findById(bet, function(err, foundBet) {
             foundBet.betAmounts.set(better, betAmount);
+            foundBet.userBets.set(outcome.toString(), better);
             foundBet.save();
         });
 
@@ -121,8 +124,11 @@ module.exports = function(app) {
             return;
         }
 
-        if(foundBet.oracle != user) {
+        if(foundBet.oracle != user || !foundBet.possibleOutcomes.includes(outcome)) {
             res.sendStatus(404);
+            return;
         }
+
+
     });
 }
