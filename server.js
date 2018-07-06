@@ -1,4 +1,5 @@
 const express = require('express');
+const fetch = require('node-fetch');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const routes = require('./routes/Routes');
@@ -8,8 +9,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 const port = 8000;
 
-
-mongoose.connect('mongodb://root:hello123!@ds117111.mlab.com:17111/bet-site-mongo');
+fetch('web.config').then(response => response.json())
+    .then(jsonResponse => function(jsonResponse) {
+        mongoose.connect('mongodb://' + jsonReponse.user + ':' + jsonReponse.password + '@' + jsonResponse.address);
+    });
 
 mongoose.connection.once('open', () => {
     console.log("Connected to database");
