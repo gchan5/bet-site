@@ -1,18 +1,15 @@
 const express = require('express');
-const fetch = require('node-fetch');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const routes = require('./routes/Routes');
+const config = require('./config.json');
 
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 const port = 8000;
 
-fetch('web.config').then(response => response.json())
-    .then(jsonResponse => function(jsonResponse) {
-        mongoose.connect('mongodb://' + jsonReponse.user + ':' + jsonReponse.password + '@' + jsonResponse.address);
-    });
+mongoose.connect('mongodb://' + config.user + ':' + config.password + '@' + config.address);
 
 mongoose.connection.once('open', () => {
     console.log("Connected to database");

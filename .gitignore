@@ -61,4 +61,4 @@ typings/
 .next
 
 # config file
-web.config
+config.json
