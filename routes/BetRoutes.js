@@ -58,7 +58,6 @@ module.exports = function(app) {
         } = req.body;
 
         var betId = mongoose.Types.ObjectId(better);
-
         bet = mongoose.Types.ObjectId(bet);
 
         Bet.update({ _id: bet }, { $addToSet : { "betters" : betId } }).exec();
@@ -67,7 +66,22 @@ module.exports = function(app) {
         Bet.findById(bet, function(err, foundBet) {
             foundBet.betAmounts.set(better, betAmount);
             foundBet.userBets.set(outcome.toString(), better);
+
+            if(foundBet.betters.indexOf(betId) !== -1) {
+                foundBet.betters.push(betId)
+            }
+
             foundBet.save();
+        });
+
+        User.findById(betId, function(err, foundUser) {
+            if(foundUser.activeBets.indexOf(bet) !== -1) {
+                foundUser.activeBets.push(bet);
+            }
+
+            foundUser.balance = foundUser.balance - betAmount;
+
+            foundUser.save();
         });
 
         res.sendStatus(200);

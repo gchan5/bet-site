@@ -47,7 +47,7 @@ module.exports = function(app) {
         } = req.body;
 
         user = mongoose.Types.ObjectId(bet);
-        var foundUser = User.findById();
+        var foundUser = User.findById(user);
 
         foundUser.balance = foundUser.balance + amountToAdd;
 
