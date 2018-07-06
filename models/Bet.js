@@ -9,6 +9,7 @@ const BetSchema = new Schema({
     possibleOutcomes: [Number],
     outcome: Number,
     finished: Boolean,
+    pot: Number,
     betAmounts: {
         type: Map,
         of: Number

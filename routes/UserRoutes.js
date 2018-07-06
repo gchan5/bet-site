@@ -49,7 +49,7 @@ module.exports = function(app) {
         user = mongoose.Types.ObjectId(bet);
         var foundUser = User.findById(user);
 
-        foundUser.balance = foundUser.balance + amountToAdd;
+        foundUser.balance += amountToAdd;
 
         foundUser.save();
 

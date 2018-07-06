@@ -19,6 +19,7 @@ module.exports = function(app) {
             possibleOutcomes,
             outcome,
             finished,
+            pot,
             betAmounts,
             outcomeAmounts
         } = req.body;
@@ -35,7 +36,10 @@ module.exports = function(app) {
             possibleOutcomes,
             outcome,
             finished,
-            userBets
+            pot,
+            userBets,
+            betAmounts,
+            outcomeAmounts
         });
 
         bet.save().then(function(savedBet) {
@@ -66,6 +70,7 @@ module.exports = function(app) {
         Bet.findById(bet, function(err, foundBet) {
             foundBet.betAmounts.set(better, betAmount);
             foundBet.userBets.set(outcome.toString(), better);
+            foundBet.pot += betAmount;
 
             if(foundBet.betters.indexOf(betId) !== -1) {
                 foundBet.betters.push(betId)
@@ -79,7 +84,7 @@ module.exports = function(app) {
                 foundUser.activeBets.push(bet);
             }
 
-            foundUser.balance = foundUser.balance - betAmount;
+            foundUser.balance -= betAmount;
 
             foundUser.save();
         });
