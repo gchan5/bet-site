@@ -8,6 +8,16 @@ module.exports = function(app) {
         });
     });
 
+    app.get('/api/users/:id', (req, res) => {
+        var user = User.findById(mongoose.Types.ObjectId(req.params.id));
+
+        if(user === null) {
+            throw new Error("User " + req.params.id + " could not be found.");
+        }
+
+        res.send(user);
+    });
+
     app.post('/api/users', (req, res) => {
         const {
             username,

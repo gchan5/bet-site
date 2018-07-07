@@ -4,12 +4,32 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 module.exports = function(app) {
+    // Get all bets
     app.get('/api/bet', (req, res) => {
         Bet.find({}).then(function(bets) {
             res.send(bets);
         });
     });
 
+    // Get info for specific bet
+    app.get('/api/bet/:id', (req, res) => {
+        var bet = Bet.findById(mongoose.Types.ObjectId(req.params.id));
+
+        if(bet === null) {
+            throw new Error("Bet " + req.params.id + " could not be found.");
+        }
+
+        res.send(bet);
+    });
+    
+    // Get all bets of a specific owner
+    app.get('/api/bet/owner/:id', (req, res) => {
+        var ownerId = mongoose.Types.ObjectId(req.params.id);
+
+        res.send(Bet.find({ owner: ownerId }));
+    });
+
+    // Create a new bet
     app.post('/api/bet', (req, res) => {
         var {
             name,
@@ -53,6 +73,7 @@ module.exports = function(app) {
         res.sendStatus(200);
     });
 
+    // Add a user to a bet
     app.post('/api/bet/addUser', (req, res) => {
         var {
             better,
@@ -92,6 +113,7 @@ module.exports = function(app) {
         res.sendStatus(200);
     });
 
+    // Add an oracle to a bet
     app.post('/api/bet/addOracle', (req, res) => {
         var {
             oracle,
@@ -107,6 +129,7 @@ module.exports = function(app) {
         res.sendStatus(200);
     })
 
+    // Delete a bet
     app.delete('/api/bet', (req, res) => {
         var {
             bet
@@ -126,6 +149,7 @@ module.exports = function(app) {
         res.sendStatus(200);
     });
 
+    // Choose an outcome for a bet
     app.post('/api/bet/chooseOutcome', (req, res) => {
         var {
             user,
