@@ -137,17 +137,28 @@ module.exports = function(app) {
         bet = mongoose.Types.ObjectId(bet);
 
         var foundBet = Bet.findById(bet);
+        var winnings = 0;
 
         if(!foundBet) {
-            res.sendStatus(404);
-            return;
+            throw new Error("An invalid bet was provided");
         }
 
-        if(foundBet.oracle != user || !foundBet.possibleOutcomes.includes(outcome)) {
-            res.sendStatus(404);
-            return;
+        if(foundBet.oracle != user) {
+            throw new Error("The user is not the oracle.");
         }
 
+        if(!foundBet.possibleOutcomes.includes(outcome)) {
+            throw new Error("The chosen outcome does not exist.");
+        }
 
+        foundBet.finished = true;
+
+        for(const key in foundBet.userBets.keys()) {
+            if(key !== outcome.toString()) {
+                for(const loser in foundBet.userBets.get(key)) {
+                    winnings += foundBet.betAmounts.get(loser.toString());
+                }
+            }
+        }
     });
 }
