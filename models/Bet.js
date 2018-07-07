@@ -16,7 +16,7 @@ const BetSchema = new Schema({
     },
     userBets: {
         type: Map,
-        of: Schema.Types.ObjectId
+        of: [Schema.Types.ObjectId]
     }
 });
 
