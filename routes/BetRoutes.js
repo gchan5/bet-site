@@ -138,6 +138,7 @@ module.exports = function(app) {
 
         var foundBet = Bet.findById(bet);
         var winnings = 0;
+        var winningBetTotals = 0;
 
         if(!foundBet) {
             throw new Error("An invalid bet was provided");
@@ -158,7 +159,17 @@ module.exports = function(app) {
                 for(const loser in foundBet.userBets.get(key)) {
                     winnings += foundBet.betAmounts.get(loser.toString());
                 }
+            } else {
+                for(const winner in foundBet.userBets.get(key)) {
+                    winningBetTotals += foundBet.betAmounts.get(winner.toString());
+                }
             }
+        }
+
+        for(const winner in foundBet.userBets.get(key)) {
+            var winnerDoc = User.findById(mongoose.Types.ObjectId(winner));
+            var selfBalance = foundBet.betAmounts.get(winner.toString());
+            winnerDoc.balance += ((selfBalance/winningBetTotals) * winnings) + selfBalance;
         }
     });
 }
