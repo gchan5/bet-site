@@ -144,7 +144,14 @@ module.exports = function(app) {
             User.update({ _id: betToDelete.owner}, { $pull : { "ownedBets" :  betToDelete._id }}).exec();
 
             for(var i = 0; i < betters.length; i++) {
-                User.update({ _id: betters[i] }, { $pull : { "activeBets" :  betToDelete._id }}).exec();
+                User.findById(betters[i]).exec(function(err, user) {
+                    if(user.activeBets.indexOf(bet) > -1) {
+                        user.activeBets.splice(user.activeBets.indexOf(bet), 1);
+                    }
+
+                    user.balance += betToDelete.betAmounts.get(betters[i].toString());
+                    user.save();
+                });
             }
         });
 

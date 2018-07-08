@@ -9,13 +9,13 @@ module.exports = function(app) {
     });
 
     app.get('/api/users/:id', (req, res) => {
-        var user = User.findById(mongoose.Types.ObjectId(req.params.id));
-
-        if(user === null) {
-            throw new Error("User " + req.params.id + " could not be found.");
-        }
-
-        res.send(user);
+        User.findById(mongoose.Types.ObjectId(req.params.id)).exec(function(err, user) {
+            if(user === null) {
+                throw new Error("User " + req.params.id + " could not be found.");
+            }
+    
+            res.send(user);
+        });
     });
 
     app.post('/api/users', (req, res) => {
@@ -50,18 +50,18 @@ module.exports = function(app) {
         res.sendStatus(200);
     });
 
+    // Add currency to user's account
     app.post('/api/users/deposit', (req, res) => {
         var {
             amountToAdd,
             user
         } = req.body;
 
-        user = mongoose.Types.ObjectId(bet);
-        var foundUser = User.findById(user);
-
-        foundUser.balance += amountToAdd;
-
-        foundUser.save();
+        user = mongoose.Types.ObjectId(user);
+        User.findById(user).exec(function(err, foundUser) {
+            foundUser.balance += amountToAdd;
+            foundUser.save();
+        });
 
         res.sendStatus(200);
     });
