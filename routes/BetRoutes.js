@@ -13,20 +13,22 @@ module.exports = function(app) {
 
     // Get info for specific bet
     app.get('/api/bet/:id', (req, res) => {
-        var bet = Bet.findById(mongoose.Types.ObjectId(req.params.id));
+        Bet.findById(mongoose.Types.ObjectId(req.params.id)).exec(function(err, bet) {
+            if(bet === null) {
+                throw new Error("Bet " + req.params.id + " could not be found.");
+            }
 
-        if(bet === null) {
-            throw new Error("Bet " + req.params.id + " could not be found.");
-        }
-
-        res.send(bet);
+            res.send(bet);
+        });
     });
-    
+
     // Get all bets of a specific owner
     app.get('/api/bet/owner/:id', (req, res) => {
         var ownerId = mongoose.Types.ObjectId(req.params.id);
 
-        res.send(Bet.find({ owner: ownerId }));
+        Bet.find({ owner: ownerId }).exec(function(err, bets) {
+            res.send(bets);
+        });
     });
 
     // Create a new bet
