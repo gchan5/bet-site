@@ -91,8 +91,17 @@ module.exports = function(app) {
         bet = mongoose.Types.ObjectId(bet);
 
         Bet.findById(bet, function(err, foundBet) {
+            var oldUserBets = foundBet.userBets.get(outcome.toString());
+
+            if(oldUserBets) {
+                oldUserBets = oldUserBets.slice();
+                oldUserBets.push(better);
+                foundBet.userBets.set(outcome.toString(), oldUserBets);
+            } else {
+                foundBet.userBets.set(outcome.toString(), better);
+            }
+
             foundBet.betAmounts.set(better, betAmount);
-            foundBet.userBets.set(outcome.toString(), better);
             foundBet.pot += betAmount;
 
             if(foundBet.betters.indexOf(betId) === -1) {
@@ -140,6 +149,10 @@ module.exports = function(app) {
         bet = mongoose.Types.ObjectId(bet);
 
         Bet.findByIdAndDelete(bet, function(err, betToDelete) {
+            if(!betToDelete) {
+                throw new Error("Bet " + bet.toString() +  " does not exist.");
+            }
+
             User.update({ _id: betToDelete.owner}, { $pull : { "ownedBets" :  betToDelete._id }}).exec();
 
             for(var i = 0; i < betToDelete.betters.length; i++) {
@@ -170,47 +183,53 @@ module.exports = function(app) {
         user = mongoose.Types.ObjectId(user);
         bet = mongoose.Types.ObjectId(bet);
 
-        var foundBet = Bet.findById(bet);
-        var winnings = 0;
-        var winningBetTotals = 0;
+        Bet.findById(bet, function(err, foundBet) {
+            var winnings = 0;
+            var winningBetTotals = 0;
 
-        if(!foundBet) {
-            throw new Error("An invalid bet was provided");
-        }
-
-        if(foundBet.oracle != user) {
-            throw new Error("The user is not the oracle.");
-        }
-
-        if(!foundBet.possibleOutcomes.includes(outcome)) {
-            throw new Error("The chosen outcome does not exist.");
-        }
-
-        foundBet.finished = true;
-
-        for(const key in foundBet.userBets.keys()) {
-            if(key !== outcome.toString()) {
-                for(const loser in foundBet.userBets.get(key)) {
-                    winnings += foundBet.betAmounts.get(loser.toString());
-                    User.findById(loser).exec(function(err, loserDoc) {
-                        loserDoc.losses += 1;
-                        loserDoc.save();
-                    });
-                }
-            } else {
-                for(const winner in foundBet.userBets.get(key)) {
-                    winningBetTotals += foundBet.betAmounts.get(winner.toString());
+            console.log(foundBet.oracle);
+            console.log(user);
+    
+            if(!foundBet) {
+                throw new Error("An invalid bet was provided");
+            }
+    
+            if(foundBet.oracle.toString() != user.toString()) {
+                throw new Error("The user is not the oracle.");
+            }
+    
+            if(!foundBet.possibleOutcomes.includes(outcome)) {
+                throw new Error("The chosen outcome does not exist.");
+            }
+    
+            foundBet.finished = true;
+    
+            for(const key in foundBet.userBets.keys()) {
+                if(key !== outcome.toString()) {
+                    for(const loser in foundBet.userBets.get(key)) {
+                        winnings += foundBet.betAmounts.get(loser.toString());
+                        User.findById(loser).exec(function(err, loserDoc) {
+                            loserDoc.losses += 1;
+                            loserDoc.save();
+                        });
+                    }
+                } else {
+                    for(const winner in foundBet.userBets.get(key)) {
+                        winningBetTotals += foundBet.betAmounts.get(winner.toString());
+                    }
                 }
             }
-        }
+    
+            for(const winner in foundBet.userBets.get(outcome.toString())) {
+                User.findById(mongoose.Types.ObjectId(winner)).exec(function(err, winnerDoc) {
+                    var selfBalance = foundBet.betAmounts.get(winner.toString());
+                    winnerDoc.balance += ((selfBalance/winningBetTotals) * winnings) + selfBalance;
+                    winnerDoc.wins += 1;
+                    winnerDoc.save();
+                });
+            }
 
-        for(const winner in foundBet.userBets.get(key)) {
-            User.findById(mongoose.Types.ObjectId(winner)).exec(function(err, winnerDoc) {
-                var selfBalance = foundBet.betAmounts.get(winner.toString());
-                winnerDoc.balance += ((selfBalance/winningBetTotals) * winnings) + selfBalance;
-                winnerDoc.wins += 1;
-                winnerDoc.save();
-            });
-        }
+            foundBet.save()
+        });
     });
 }
