@@ -154,18 +154,22 @@ module.exports = function(app) {
             }
 
             User.update({ _id: betToDelete.owner}, { $pull : { "ownedBets" :  betToDelete._id }}).exec();
+            User.update({ _id: betToDelete.oracle}, { $pull : { "oracledBets" :  betToDelete._id }}).exec();
 
-            for(var i = 0; i < betToDelete.betters.length; i++) {
-                User.findById(mongoose.Types.ObjectId(betToDelete.betters[i])).exec(function(err, user) {
-                    if(user) {
-                        if(user.activeBets.indexOf(bet) > -1) {
-                            user.activeBets.splice(user.activeBets.indexOf(bet), 1);
+            // if we're deleting a bet that has not been finished, return funds to betters
+            if(!betToDelete.finished) {
+                for(var i = 0; i < betToDelete.betters.length; i++) {
+                    User.findById(mongoose.Types.ObjectId(betToDelete.betters[i])).exec(function(err, user) {
+                        if(user) {
+                            if(user.activeBets.indexOf(bet) > -1) {
+                                user.activeBets.splice(user.activeBets.indexOf(bet), 1);
+                            }
+        
+                            user.balance += betToDelete.betAmounts.get(user._id.toString());
+                            user.save();
                         }
-    
-                        user.balance += betToDelete.betAmounts.get(user._id.toString());
-                        user.save();
-                    }
-                });
+                    });
+                }
             }
         });
 
@@ -186,9 +190,6 @@ module.exports = function(app) {
         Bet.findById(bet, function(err, foundBet) {
             var winnings = 0;
             var winningBetTotals = 0;
-
-            console.log(foundBet.oracle);
-            console.log(user);
     
             if(!foundBet) {
                 throw new Error("An invalid bet was provided");
@@ -203,33 +204,50 @@ module.exports = function(app) {
             }
     
             foundBet.finished = true;
+            var keys = foundBet.userBets.keys();
+            var key = keys.next();
     
-            for(const key in foundBet.userBets.keys()) {
-                if(key !== outcome.toString()) {
-                    for(const loser in foundBet.userBets.get(key)) {
-                        winnings += foundBet.betAmounts.get(loser.toString());
-                        User.findById(loser).exec(function(err, loserDoc) {
-                            loserDoc.losses += 1;
+            while(!key.done) {
+                console.log("key");
+                console.log(key.value);
+                if(key.value !== outcome.toString()) {
+                    var losers = foundBet.userBets.get(key.value);
+                    for(var i = 0; i < losers.length; i++) {
+                        console.log("loser");
+                        console.log(losers[i]);
+                        winnings += foundBet.betAmounts.get(losers[i].toString());
+                        User.findById(losers[i]).exec(function(err, loserDoc) {
+                            loserDoc.losses = loserDoc.losses + 1;;
                             loserDoc.save();
                         });
                     }
                 } else {
-                    for(const winner in foundBet.userBets.get(key)) {
-                        winningBetTotals += foundBet.betAmounts.get(winner.toString());
+                    var winners = foundBet.userBets.get(key.value);
+                    for(var i = 0; i < winners.length; i++) {
+                        winningBetTotals += foundBet.betAmounts.get(winners[i].toString());
                     }
                 }
+
+                key = keys.next();
             }
+
+            var winners = foundBet.userBets.get(outcome.toString());
     
-            for(const winner in foundBet.userBets.get(outcome.toString())) {
-                User.findById(mongoose.Types.ObjectId(winner)).exec(function(err, winnerDoc) {
-                    var selfBalance = foundBet.betAmounts.get(winner.toString());
-                    winnerDoc.balance += ((selfBalance/winningBetTotals) * winnings) + selfBalance;
-                    winnerDoc.wins += 1;
-                    winnerDoc.save();
+            for(var i = 0; i < winners.length; i++) {
+                console.log("winner");
+                console.log(winners[i]);
+                User.findById(winners[i]).exec(function(err, winnerDoc) {
+                    if(winnerDoc) {
+                        var selfBalance = foundBet.betAmounts.get(winnerDoc._id.toString());
+                        winnerDoc.balance = winnerDoc.balance + ((selfBalance/winningBetTotals) * winnings) + selfBalance;
+                        winnerDoc.wins = winnerDoc.wins + 1;
+                        winnerDoc.save();
+                    }
                 });
             }
 
-            foundBet.save()
+            foundBet.save();
+            res.sendStatus(200);
         });
     });
 }
