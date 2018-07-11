@@ -90,6 +90,7 @@ module.exports = function(app) {
         var betId = mongoose.Types.ObjectId(better);
         bet = mongoose.Types.ObjectId(bet);
 
+        // add user info to userbets and betamounts maps
         Bet.findById(bet, function(err, foundBet) {
             var oldUserBets = foundBet.userBets.get(outcome.toString());
 
@@ -111,6 +112,7 @@ module.exports = function(app) {
             foundBet.save();
         });
 
+        // deduct bet amount from user balance and add bet to user's active bets
         User.findById(betId, function(err, foundUser) {
             if(foundUser.activeBets.indexOf(bet) === -1) {
                 foundUser.activeBets.push(bet);
@@ -208,13 +210,10 @@ module.exports = function(app) {
             var key = keys.next();
     
             while(!key.done) {
-                console.log("key");
-                console.log(key.value);
                 if(key.value !== outcome.toString()) {
+                    // increment the loss count of each loser by 1
                     var losers = foundBet.userBets.get(key.value);
                     for(var i = 0; i < losers.length; i++) {
-                        console.log("loser");
-                        console.log(losers[i]);
                         winnings += foundBet.betAmounts.get(losers[i].toString());
                         User.findById(losers[i]).exec(function(err, loserDoc) {
                             loserDoc.losses = loserDoc.losses + 1;;
@@ -232,10 +231,12 @@ module.exports = function(app) {
             }
 
             var winners = foundBet.userBets.get(outcome.toString());
-    
+            
+            // calculate winnings for each winner
+            // each winner gets a share of the pot based on how much they bet compared to other betters
+            // ex: if one better placed a bet amounting to 1/3 of the total winning bets, and the total winnings
+            // is 300, then the better would recieve his original bet + 100. 
             for(var i = 0; i < winners.length; i++) {
-                console.log("winner");
-                console.log(winners[i]);
                 User.findById(winners[i]).exec(function(err, winnerDoc) {
                     if(winnerDoc) {
                         var selfBalance = foundBet.betAmounts.get(winnerDoc._id.toString());
