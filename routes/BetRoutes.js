@@ -216,7 +216,12 @@ module.exports = function(app) {
                     for(var i = 0; i < losers.length; i++) {
                         winnings += foundBet.betAmounts.get(losers[i].toString());
                         User.findById(losers[i]).exec(function(err, loserDoc) {
-                            loserDoc.losses = loserDoc.losses + 1;;
+                            loserDoc.losses = loserDoc.losses + 1;
+
+                            if(loserDoc.pastBets.indexOf(betId) === -1) {
+                                loserDoc.pastBets.push(betId)
+                            }
+
                             loserDoc.save();
                         });
                     }
@@ -242,6 +247,11 @@ module.exports = function(app) {
                         var selfBalance = foundBet.betAmounts.get(winnerDoc._id.toString());
                         winnerDoc.balance = winnerDoc.balance + ((selfBalance/winningBetTotals) * winnings) + selfBalance;
                         winnerDoc.wins = winnerDoc.wins + 1;
+
+                        if(winnerDoc.pastBets.indexOf(betId) === -1) {
+                            winnerDoc.pastBets.push(betId)
+                        }
+
                         winnerDoc.save();
                     }
                 });

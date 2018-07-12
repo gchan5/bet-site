@@ -9,7 +9,8 @@ const UserSchema = new Schema({
     losses: Number,
     activeBets: [Schema.Types.ObjectId],
     ownedBets: [Schema.Types.ObjectId],
-    oracledBets: [Schema.Types.ObjectId]
+    oracledBets: [Schema.Types.ObjectId],
+    pastBets: [Schema.Types.ObjectId]
 });
 
 module.exports = mongoose.model('User', UserSchema);
