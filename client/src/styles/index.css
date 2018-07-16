@@ -7,3 +7,18 @@ body {
 .purple-bg {
     background-color: #6c49a0;
 }
+
+.purple-button {
+    background-color: #7852b2;
+}
+
+.white-text {
+    color: #fff;
+}
+
+@media (min-width: 1000px) {
+    .purple-button {
+        width: 75px;
+        margin: 0 10px;
+    }
+}

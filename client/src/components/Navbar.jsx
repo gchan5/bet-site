@@ -12,7 +12,12 @@ class Navbar extends Component {
         } else {
             return (
                 <div className='navbar-nav'>
-                    <Link className="nav-link mb-0" to='/'>Login</Link>
+                    <Link className="nav-link btn mb-0 purple-button" to='/'>
+                        <span className="white-text">Login</span>
+                    </Link>
+                    <Link className="nav-link btn mb-0 purple-button" to='/'>
+                        <span className="white-text">Sign up</span>
+                    </Link>
                 </div>
             );
         }
