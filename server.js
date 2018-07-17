@@ -1,13 +1,21 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const session = require('express-session');
 const routes = require('./routes/Routes');
 const config = require('./config.json');
 
 const app = express();
+const port = 8000;
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-const port = 8000;
+
+app.use(session({
+    secret: config.sessionSecret,
+    resave: true,
+    saveUninitialized: false
+}));
 
 mongoose.connect('mongodb://' + config.user + ':' + config.password + '@' + config.address);
 
