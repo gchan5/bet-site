@@ -10,35 +10,58 @@ class LoginPage extends Component {
 
         this.state = {
             username: "",
-            password: ""
+            password: "",
+            errorMessage: ""
         }
 
+        this.setErrorMessage = this.setErrorMessage.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleUsernameChange = this.handleUsernameChange.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);
     }
 
+    setErrorMessage(message) {
+        this.setState({
+            ...this.state,
+            errorMessage: message
+        });
+    }
+
     handleSubmit(event) {
         event.preventDefault();
-        postRequest('/auth/login', this.state).then(function(response) {
+        
+        if(this.state.username === "") {
+            this.setErrorMessage("Username is required.");
+            return;
+        }
+
+        if(this.state.password === "") {
+            this.setErrorMessage("Password is required.");
+            return;
+        }
+
+        postRequest('/auth/login', this.state).then((response) => {
             if(response.ok) {
                 console.log("Login success");
             } else {
-                console.log("Login failed");
+                this.setState({
+                    ...this.state,
+                    errorMessage: "Wrong username or password."
+                });
             }
         })
     }
 
     handleUsernameChange(event) {
         this.setState({
-            username: event.target.value,
-            password: this.state.password
+            ...this.state,
+            username: event.target.value
         });
     }
 
     handlePasswordChange(event) {
         this.setState({
-            username: this.state.username,
+            ...this.state,
             password: event.target.value
         });
     }
@@ -55,6 +78,9 @@ class LoginPage extends Component {
                             <h2>Login</h2>
                             <hr />
                             <form onSubmit={this.handleSubmit}>
+                                <div className="form-group">
+                                    <span>{this.state.errorMessage}</span>
+                                </div>
                                 <div className="form-group">
                                     <label htmlFor="usernameField">Username</label>
                                     <input type="text" className="form-control" id="usernameField" aria-describedby="usernameField" placeholder="Enter username" onChange={this.handleUsernameChange} />
