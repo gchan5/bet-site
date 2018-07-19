@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const User = require('./../models/User');
 
 module.exports = function(app) {
-    app.post('/login', (req, res, next) => {
+    app.post('/auth/login', (req, res, next) => {
         const {
             username,
             password
@@ -22,6 +22,7 @@ module.exports = function(app) {
     
             bcrypt.compare(password, user.password, function(err, result) {
                 if(result) {
+                    req.session.userId = user._id;
                     res.sendStatus(200);
                 } else {
                     var error = new Error('Wrong username or password.');

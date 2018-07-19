@@ -12,7 +12,7 @@ class Navbar extends Component {
         } else {
             return (
                 <div className='navbar-nav'>
-                    <Link className="nav-link btn mb-0 purple-button" to='/'>
+                    <Link className="nav-link btn mb-0 purple-button" to='/login'>
                         <span className="white-text">Login</span>
                     </Link>
                     <Link className="nav-link btn mb-0 purple-button" to='/'>
@@ -27,7 +27,7 @@ class Navbar extends Component {
         const link = this.checkUser();
 
         return (
-            <header className="navbar navbar-expand-lg navbar-dark fixed-top purple-bg">
+            <header className="navbar navbar-expand-lg navbar-dark sticky purple-bg">
                 <div className='container'>
                     <Link to='/'>
                         <span className="navbar-brand mb-0 h1">BetSite</span>
