@@ -6,7 +6,7 @@ class Navbar extends Component {
         if(this.props.user) {
             return (
                 <div className='navbar-nav'>
-                    <span>Welcome back, {this.props.user.username}</span>
+                    <span>Welcome back, {this.props.user}</span>
                 </div>
             );
         } else {
