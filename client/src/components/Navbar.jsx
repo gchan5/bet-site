@@ -2,11 +2,31 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
 class Navbar extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            logOut: false
+        }
+
+        this.logout = this.logout.bind(this);
+    }
+
+    logout(history) {
+        this.props.removeUser();
+        this.props.history.push('/');
+    }
+
     checkUser() {
         if(this.props.user) {
             return (
                 <div className='navbar-nav'>
-                    <span>Welcome back, {this.props.user}</span>
+                    <Link className="nav-link btn mb-0 purple-button" to='/'>
+                        <span className="white-text">Profile</span>
+                    </Link>
+                    <button className="nav-link btn mb-0 purple-button" onClick={this.logout}>
+                        <span className="white-text">Logout</span>
+                    </button>
                 </div>
             );
         } else {
@@ -24,15 +44,13 @@ class Navbar extends Component {
     }
 
     render() {
-        const link = this.checkUser();
-
         return (
             <header className="navbar navbar-expand-lg navbar-dark sticky purple-bg">
                 <div className='container'>
                     <Link to='/'>
                         <span className="navbar-brand mb-0 h1">BetSite</span>
                     </Link>
-                    {link}
+                    {this.checkUser()}
                 </div>
             </header>
         );

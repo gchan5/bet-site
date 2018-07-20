@@ -15,9 +15,17 @@ class App extends Component {
             });
         }
 
+        this.removeUser = () => {
+            this.setState({
+                ...this.state,
+                username: null
+            })
+        }
+
         this.state = {
             username: null,
-            setUser: this.setUser
+            setUser: this.setUser,
+            removeUser: this.removeUser
         }
     }
 

@@ -8,7 +8,7 @@ class Home extends Component {
         return (
             <div className="App">
                 <UserContext.Consumer>
-                    {({username}) => <Navbar user={username} />}
+                    {({username, removeUser}) => <Navbar user={username} removeUser={removeUser} history={this.props.history} />}
                 </UserContext.Consumer>
                 <p className="App-intro">
                     Home

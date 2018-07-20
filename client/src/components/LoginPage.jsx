@@ -83,9 +83,9 @@ class LoginPage extends Component {
 
         return (
             <UserContext.Consumer>
-                {({username, setUser}) => (
+                {({username, setUser, removeUser}) => (
                     <div className="fill">
-                        <Navbar user={username}/>
+                        <Navbar user={username} removeUser={removeUser} history={this.props.history} />
                         <div className="container body fill">
                             <LoginForm 
                                 handleUsernameChange={this.handleUsernameChange} 

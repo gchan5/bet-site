@@ -32,4 +32,9 @@ module.exports = function(app) {
             })
         });
     });
+
+    app.post('/auth/logout', (req, res) => {
+        req.session.userId = null;
+        res.sendStatus(200);
+    });
 }
