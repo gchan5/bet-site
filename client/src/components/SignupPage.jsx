@@ -75,17 +75,18 @@ class SignupPage extends Component {
                                 ...this.state,
                                 usernameMessage: "This username is not available."
                             });
-                            break;
+                            return;
                         }
                     }
+
+                    this.setState({
+                        ...this.state,
+                        username: name,
+                        usernameMessage: null
+                    });
                 })
             }
         })
-
-        this.setState({
-            ...this.state,
-            username: event.target.value
-        });
     }
 
     handlePasswordChange(event) {
