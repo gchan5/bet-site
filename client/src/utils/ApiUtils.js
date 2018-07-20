@@ -13,3 +13,17 @@ export function postRequest(url, req) {
         body: JSON.stringify(req),
     });
 }
+
+export function getRequest(url) {
+    return fetch(url, {
+        method: "GET",
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "same-origin",
+        headers: {
+            "Content-Type": "application/json; charset=utf-8",
+        },
+        redirect: "follow",
+        referrer: "no-referrer"
+    })
+}

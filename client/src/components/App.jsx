@@ -3,6 +3,7 @@ import { Route, Switch } from 'react-router-dom';
 import { UserContext } from '../UserContext.js';
 import Home from './Home';
 import LoginPage from './LoginPage';
+import SignupPage from './SignupPage';
 
 class App extends Component {
     constructor(props) {
@@ -37,6 +38,7 @@ class App extends Component {
             <UserContext.Provider value={this.state}>
                 <Switch>
                     <Route path='/login' component={LoginPage} />
+                    <Route path='/signup' component={SignupPage} />
                     <Route path='/' component={Home} />
                     <Route component={Home} />
                 </Switch>

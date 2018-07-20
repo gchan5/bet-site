@@ -38,7 +38,7 @@ class Navbar extends Component {
                     <Link className="nav-link btn mb-0 purple-button button-small" to='/login'>
                         <span className="white-text">Login</span>
                     </Link>
-                    <Link className="nav-link btn mb-0 purple-button button-small" to='/'>
+                    <Link className="nav-link btn mb-0 purple-button button-small" to='/signup'>
                         <span className="white-text">Sign up</span>
                     </Link>
                 </div>
