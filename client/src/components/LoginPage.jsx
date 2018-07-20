@@ -45,8 +45,10 @@ class LoginPage extends Component {
 
         postRequest('/auth/login', this.state).then((response) => {
             if(response.ok) {
-                console.log("User " + this.state.username + " successfully logged in.");
-                addUser(this.state.username);
+                response.text().then((text) => {
+                    addUser(this.state.username, text.slice(1, -1));
+                });
+
                 this.setState({
                     ...this.state,
                     loginSuccessful: true

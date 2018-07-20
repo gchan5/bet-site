@@ -23,6 +23,7 @@ body {
 
 .purple-button {
     background-color: #7852b2;
+    margin: 0 10px;
 }
 
 .white-text {
@@ -39,8 +40,7 @@ body {
 }
 
 @media (min-width: 1000px) {
-    .purple-button {
+    .button-small {
         width: 75px;
-        margin: 0 10px;
     }
 }

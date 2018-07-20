@@ -2,6 +2,7 @@ import React from 'react';
 
 export const currentUser = {
     username: null,
+    userId: null,
     setUser: (user) => {},
     removeUser: (user) => {}
 };

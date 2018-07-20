@@ -23,7 +23,7 @@ module.exports = function(app) {
             bcrypt.compare(password, user.password, function(err, result) {
                 if(result) {
                     req.session.userId = user._id;
-                    res.sendStatus(200);
+                    res.send(user._id);
                 } else {
                     var error = new Error('Wrong username or password.');
                     error.status = 401;

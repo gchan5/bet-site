@@ -22,9 +22,12 @@ class Navbar extends Component {
             return (
                 <div className='navbar-nav'>
                     <Link className="nav-link btn mb-0 purple-button" to='/'>
+                        <span className="white-text">Create a Bet</span>
+                    </Link>
+                    <Link className="nav-link btn mb-0 purple-button button-small" to='/'>
                         <span className="white-text">Profile</span>
                     </Link>
-                    <button className="nav-link btn mb-0 purple-button" onClick={this.logout}>
+                    <button className="nav-link btn mb-0 purple-button button-small" onClick={this.logout}>
                         <span className="white-text">Logout</span>
                     </button>
                 </div>
@@ -32,10 +35,10 @@ class Navbar extends Component {
         } else {
             return (
                 <div className='navbar-nav'>
-                    <Link className="nav-link btn mb-0 purple-button" to='/login'>
+                    <Link className="nav-link btn mb-0 purple-button button-small" to='/login'>
                         <span className="white-text">Login</span>
                     </Link>
-                    <Link className="nav-link btn mb-0 purple-button" to='/'>
+                    <Link className="nav-link btn mb-0 purple-button button-small" to='/'>
                         <span className="white-text">Sign up</span>
                     </Link>
                 </div>

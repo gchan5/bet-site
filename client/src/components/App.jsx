@@ -8,22 +8,25 @@ class App extends Component {
     constructor(props) {
         super(props);
 
-        this.setUser = (user) => {
+        this.setUser = (user, userId) => {
             this.setState({
                 ...this.state,
-                username: user
+                username: user,
+                userId: userId
             });
         }
 
         this.removeUser = () => {
             this.setState({
                 ...this.state,
-                username: null
+                username: null,
+                userId: null
             })
         }
 
         this.state = {
             username: null,
+            userId: null,
             setUser: this.setUser,
             removeUser: this.removeUser
         }
