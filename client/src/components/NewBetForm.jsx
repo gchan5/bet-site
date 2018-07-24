@@ -21,6 +21,15 @@ class NewBetForm extends Component {
                             </div>
                         </div>
                         <div className="form-group">
+                            <label htmlFor="usernameField">Oracle</label>
+                            <select className="form-control" defaultValue="Choose an oracle">
+                                <option>user</option>
+                            </select>
+                            <div className="invalid-field">
+                                <span>{this.props.usernameMessage}</span>
+                            </div>
+                        </div>
+                        <div className="form-group">
                             <label htmlFor="descriptionField">Description</label>
                             <textarea className="form-control" id="descriptionField" rows="3" placeholder="Enter a description..." onChange={this.props.handlePasswordChange} />
                             <div className="invalid-field">

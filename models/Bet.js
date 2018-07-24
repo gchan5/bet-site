@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const BetSchema = new Schema({
     name: String,
     owner: Schema.Types.ObjectId,
+    description: String,
     oracle: Schema.Types.ObjectId,
     betters: [Schema.Types.ObjectId],
     possibleOutcomes: [Number],

@@ -12,9 +12,9 @@ class NewBetPage extends Component {
         super(props);
 
         this.state = {
-            username: "",
-            password: "",
+            name: "",
             errorMessage: "",
+            description: "",
             outcomes: [""],
             signUpSuccessful: false
         }
@@ -63,41 +63,6 @@ class NewBetPage extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        
-        if(this.state.username === "") {
-            this.setState({
-                ...this.state,
-                usernameMessage: "Username is required."
-            });
-            return;
-        }
-
-        if(this.state.password === "") {
-            this.seState({
-                ...this.state,
-                passwordMessage: "Password is required."
-            });
-            return;
-        }
-
-        if(this.state.usernameMessage !== "" || this.state.passwordMessage !== "") {
-            return;
-        }
-
-        postRequest('/api/user', this.state).then((response) => {
-            if(response.ok) {
-                console.log(response);
-                this.setState({
-                    ...this.state,
-                    signUpSuccessful: true
-                });
-            } else {
-                this.setState({
-                    ...this.state,
-                    errorMessage: "An error occurred during registration."
-                });
-            }
-        })
     }
 
     handleUsernameChange(event) {
