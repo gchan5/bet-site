@@ -24,36 +24,26 @@ module.exports = function(app) {
         });
     });
 
-    app.post('/api/users', (req, res) => {
+    app.post('/api/user', (req, res) => {
         const {
             username,
-            password,
-            balance,
-            wins,
-            losses,
-            activeBets,
-            ownedBets,
-            oracledBets
+            password
         } = req.body;
 
         const user = new User({
             username,
             password,
-            balance,
-            wins,
-            losses,
-            activeBets,
-            ownedBets,
-            oracledBets
+            balance: 0,
+            wins: 0,
+            losses: 0,
+            activeBets: [],
+            ownedBets: [],
+            oracledBets: []
         });
-
-        var userId;
 
         user.save(function(err, user) {
-            userId = user._id;
+            res.status(200).send(user._id);
         });
-
-        res.sendStatus(200);
     });
 
     // Add currency to user's account

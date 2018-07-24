@@ -15,7 +15,8 @@ class SignupPage extends Component {
             password: "",
             errorMessage: "",
             usernameMessage: "",
-            loginSuccessful: false
+            passwordMessage: "",
+            signUpSuccessful: false
         }
 
         this.setErrorMessage = this.setErrorMessage.bind(this);
@@ -31,33 +32,40 @@ class SignupPage extends Component {
         });
     }
 
-    handleSubmit(event, addUser) {
+    handleSubmit(event) {
         event.preventDefault();
         
         if(this.state.username === "") {
-            this.setErrorMessage("Username is required.");
+            this.setState({
+                ...this.state,
+                usernameMessage: "Username is required."
+            });
             return;
         }
 
         if(this.state.password === "") {
-            this.setErrorMessage("Password is required.");
+            this.seState({
+                ...this.state,
+                passwordMessage: "Password is required."
+            });
             return;
         }
 
-        postRequest('/auth/login', this.state).then((response) => {
-            if(response.ok) {
-                response.text().then((text) => {
-                    addUser(this.state.username, text.slice(1, -1));
-                });
+        if(this.state.usernameMessage !== "" || this.state.passwordMessage !== "") {
+            return;
+        }
 
+        postRequest('/api/user', this.state).then((response) => {
+            if(response.ok) {
+                console.log(response);
                 this.setState({
                     ...this.state,
-                    loginSuccessful: true
+                    signUpSuccessful: true
                 });
             } else {
                 this.setState({
                     ...this.state,
-                    errorMessage: "Wrong username or password."
+                    errorMessage: "An error occurred during registration."
                 });
             }
         })
@@ -82,7 +90,7 @@ class SignupPage extends Component {
                     this.setState({
                         ...this.state,
                         username: name,
-                        usernameMessage: null
+                        usernameMessage: ""
                     });
                 })
             }
@@ -92,14 +100,15 @@ class SignupPage extends Component {
     handlePasswordChange(event) {
         this.setState({
             ...this.state,
-            password: event.target.value
+            password: event.target.value,
+            passwordMessage: ""
         });
     }
 
     render() {
-        if(this.state.loginSuccessful) {
+        if(this.state.signUpSuccessful) {
             return(
-                <Redirect to='/dashboard' />
+                <Redirect to='/login' />
             );
         }
 
@@ -116,6 +125,7 @@ class SignupPage extends Component {
                                 setUser={setUser}
                                 errorMessage={this.state.errorMessage}
                                 usernameMessage={this.state.usernameMessage} 
+                                passwordMessage={this.state.passwordMessage}
                             />
                         </div>
                     </div>
