@@ -4,6 +4,7 @@ import { UserContext } from '../UserContext.js';
 import Home from './Home';
 import LoginPage from './LoginPage';
 import SignupPage from './SignupPage';
+import NewBetPage from './NewBetPage';
 
 class App extends Component {
     constructor(props) {
@@ -39,6 +40,7 @@ class App extends Component {
                 <Switch>
                     <Route path='/login' component={LoginPage} />
                     <Route path='/signup' component={SignupPage} />
+                    <Route path='/new-bet' component={NewBetPage} />
                     <Route path='/' component={Home} />
                     <Route component={Home} />
                 </Switch>

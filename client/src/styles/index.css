@@ -46,6 +46,11 @@ body {
     color: #dc3545;
 }
 
+.margin-5 {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
 @media (min-width: 1000px) {
     .button-small {
         width: 75px;
