@@ -37,40 +37,31 @@ module.exports = function(app) {
             name,
             owner,
             oracle,
-            betters,
-            possibleOutcomes,
-            outcome,
-            finished,
-            pot,
-            betAmounts,
-            userBets
+            description,
+            possibleOutcomes
         } = req.body;
 
         var id;
 
         owner = mongoose.Types.ObjectId(owner);
         oracle = oracle === "" ? null : mongoose.Types.ObjectId(oracle);
-        betters = betters.map(better => mongoose.Types.ObjectId(better));
 
         const bet = new Bet({
             name,
             owner,
+            description,
             oracle,
-            betters,
+            betters: [],
             possibleOutcomes,
-            outcome,
-            finished,
-            pot,
-            betAmounts,
-            userBets
+            outcome: null,
+            finished: false,
+            pot: 0,
+            betAmounts: {},
+            userBets: {}
         });
 
         bet.save().then(function(savedBet) {
             User.update({ _id: savedBet.owner}, { $addToSet : { "ownedBets" : savedBet._id } }).exec();
-
-            for(var i = 0; i < betters.length; i++) {
-                User.update({ _id: betters[i]}, { "$addToSet" : { "activeBets" : savedBet._id} }).exec();
-            }
 
             id = savedBet._id;
         });

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 import Navbar from './Navbar';
 import NewBetForm from './NewBetForm';
 
@@ -13,16 +12,62 @@ class NewBetPage extends Component {
 
         this.state = {
             name: "",
+            oracle: "",
             errorMessage: "",
             description: "",
             outcomes: [""],
-            signUpSuccessful: false
+            signUpSuccessful: false,
+            oracleUsers: [],
+            nameMessage: "",
+            oracleMessage: "",
+            descriptionMessage: ""
         }
 
+        getRequest('/api/usernames').then((response) => {
+            if(response.ok) {
+                response.json().then((responseJson) => {
+                    var users = [''];
+                    for(const user in responseJson) {
+                        users.push(responseJson[user]);
+                    }
+
+                    this.setState({
+                        ...this.state,
+                        oracleUsers: users
+                    })
+                })
+            }
+        });
+
+        this.handleNameChange= this.handleNameChange.bind(this);
+        this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
+        this.handleOracleChange = this.handleOracleChange.bind(this);
         this.setErrorMessage = this.setErrorMessage.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleUsernameChange = this.handleUsernameChange.bind(this);
-        this.handlePasswordChange = this.handlePasswordChange.bind(this);
+    }
+
+    handleNameChange(event) {
+        this.setState({
+            ...this.state,
+            name: event.target.value,
+            nameMessage: ""
+        });
+    }
+
+    handleDescriptionChange(event) {
+        this.setState({
+            ...this.state,
+            description: event.target.value,
+            descriptionMessage: ""
+        });
+    }
+
+    handleOracleChange(event) {
+        this.setState({
+            ...this.state,
+            oracle: event.target.value,
+            oracleMessage: ""
+        });
     }
 
     deleteOutcome(index) {
@@ -61,66 +106,99 @@ class NewBetPage extends Component {
         });
     }
 
-    handleSubmit(event) {
+    handleSubmit(event, owner) {
         event.preventDefault();
-    }
 
-    handleUsernameChange(event) {
-        const name = event.target.value;
+        var outcomes = this.state.outcomes.slice();
+        outcomes.shift();
 
-        getRequest('/api/usernames').then((response) => {
+        if(owner === "" || owner === null) {
+            this.setState({
+                ...this.state,
+                errorMessage: "You must be logged in to create a bet."
+            });
+
+            return;
+        }
+
+        if(this.state.name === "" || this.state.name === null) {
+            this.setState({
+                ...this.state,
+                nameMessage: "A name is required."
+            });
+
+            return;
+        }
+
+        if(this.state.oracle === "" || this.state.oracle === null) {
+            this.setState({
+                ...this.state,
+                oracleMessage: "An oracle is required"
+            });
+
+            return;
+        }
+
+        if(this.state.description === "" || this.state.description === null) {
+            this.setState({
+                ...this.state,
+                descriptionMessage: "A description is required."
+            });
+
+            return;
+        }
+
+        if(this.state.outcomes.length < 3) {
+            this.setState({
+                ...this.state,
+                errorMessage: "At least 2 outcomes are required."
+            });
+
+            return;
+        }
+
+        const bet = {
+            name: this.state.name,
+            oracle: this.state.oracle,
+            owner: owner,
+            description: this.state.description,
+            possibleOutcomes: outcomes
+        }
+
+        postRequest('/api/bet', bet).then((response) => {
             if(response.ok) {
-                response.json().then((responseJson) => {
-                    for(const user in responseJson) {
-                        if(responseJson[user].username === name) {
-                            this.setState({
-                                ...this.state,
-                                usernameMessage: "This username is not available."
-                            });
-                            return;
-                        }
-                    }
-
-                    this.setState({
-                        ...this.state,
-                        username: name,
-                        usernameMessage: ""
-                    });
-                })
+                console.log(response);
+            } else {
+                this.setState({
+                    ...this.state,
+                    errorMessage: "An error occurred during bet creation."
+                }); 
             }
         })
     }
 
-    handlePasswordChange(event) {
-        this.setState({
-            ...this.state,
-            password: event.target.value,
-            passwordMessage: ""
-        });
-    }
-
     render() {
-        if(this.state.signUpSuccessful) {
-            return(
-                <Redirect to='/login' />
-            );
-        }
-
         const outcomeFields = this.createOutcomeFields();
 
         return (
             <UserContext.Consumer>
-                {({username, setUser, removeUser}) => (
+                {({username, userId, setUser, removeUser}) => (
                     <div className="fill">
                         <Navbar user={username} removeUser={removeUser} history={this.props.history} />
                         <div className="container body fill">
                             <NewBetForm 
-                                handleUsernameChange={this.handleUsernameChange} 
-                                handlePasswordChange={this.handlePasswordChange} 
+                                handleNameChange={this.handleNameChange} 
+                                handleDescriptionChange={this.handleDescriptionChange}
+                                handleOracleChange={this.handleOracleChange} 
                                 handleSubmit={this.handleSubmit}
+                                oracleUsers={this.state.oracleUsers}
                                 setUser={setUser}
                                 errorMessage={this.state.errorMessage}
                                 outcomeFields={outcomeFields}
+                                userId={userId}
+                                nameMessage={this.state.nameMessage}
+                                descriptionMessage={this.state.descriptionMessage}
+                                oracleMessage={this.state.oracleMessage}
                             />
                         </div>
                     </div>

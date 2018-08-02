@@ -7,7 +7,7 @@ const BetSchema = new Schema({
     description: String,
     oracle: Schema.Types.ObjectId,
     betters: [Schema.Types.ObjectId],
-    possibleOutcomes: [Number],
+    possibleOutcomes: [String],
     outcome: Number,
     finished: Boolean,
     pot: Number,

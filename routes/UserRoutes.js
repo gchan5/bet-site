@@ -9,7 +9,7 @@ module.exports = function(app) {
     });
 
     app.get('/api/usernames', (req, res) => {
-        User.find({}, "username -_id").then(function(users) {
+        User.find({}, "username").then(function(users) {
             res.status(200).send(users);
         });
     });

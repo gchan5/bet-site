@@ -21,7 +21,7 @@ class Navbar extends Component {
         if(this.props.user) {
             return (
                 <div className='navbar-nav'>
-                    <Link className="nav-link btn mb-0 purple-button" to='/'>
+                    <Link className="nav-link btn mb-0 purple-button" to='/new-bet'>
                         <span className="white-text">Create a Bet</span>
                     </Link>
                     <Link className="nav-link btn mb-0 purple-button button-small" to='/'>

@@ -25,7 +25,7 @@ class OutcomeField extends Component {
                         <input type="text" className="form-control" id="outcomeField" value={this.props.outcome} disabled />
                     </div>
                     <div className="col-2">
-                        <button className="btn btn-danger"><span className="fas fa-minus"></span></button>
+                        <button type="button" className="btn btn-danger"><span className="fas fa-minus"></span></button>
                     </div>
                 </div>
             );
@@ -36,7 +36,7 @@ class OutcomeField extends Component {
                         <input type="textarea" className="form-control" id="outcomeField" placeholder="Enter an outcome" onChange={this.handleOutcomeChange} />
                     </div>
                     <div className="col-2">
-                        <button className="btn btn-success" onClick={() => this.props.addOutcome(this.state.outcomeText)}><span className="fas fa-plus"></span></button>
+                        <button type="button" className="btn btn-success" onClick={() => this.props.addOutcome(this.state.outcomeText)}><span className="fas fa-plus"></span></button>
                     </div>
                 </div>
             );
