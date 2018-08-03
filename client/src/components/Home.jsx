@@ -3,6 +3,7 @@ import { UserContext } from '../UserContext';
 
 import Navbar from './Navbar';
 import BetCard from './BetCard';
+import SearchBar from './SearchBar';
 import { getRequest} from '../utils/ApiUtils.js';
 import '../styles/App.css';
 
@@ -31,6 +32,17 @@ class Home extends Component {
                 })
             }
         });
+
+        this.handleSearch = this.handleSearch.bind(this);
+    }
+
+    handleSearch(event) {
+        let bets = this.state.bets.slice();
+
+        this.setState({
+            ...this.state,
+            shownBets: bets.filter(bet => bet.name.startsWith(event.target.value))
+        })
     }
 
     render() {
@@ -39,18 +51,21 @@ class Home extends Component {
                 <UserContext.Consumer>
                     {({username, removeUser}) => <Navbar user={username} removeUser={removeUser} history={this.props.history} />}
                 </UserContext.Consumer>
-                <div className="container wrap-cards">
-                    {
-                        this.state.shownBets.map(function(bet, place) {
-                            return (
-                                <BetCard
-                                    key={place}
-                                    name={bet.name}
-                                    description={bet.description}
-                                />
-                            )
-                        })
-                    }
+                <div className="container">
+                    <SearchBar  handleSearch={this.handleSearch} />
+                    <div className="wrap-cards">
+                        {
+                            this.state.shownBets.map(function(bet, place) {
+                                return (
+                                    <BetCard
+                                        key={place}
+                                        name={bet.name}
+                                        description={bet.description}
+                                    />
+                                )
+                            })
+                        }
+                    </div>
                 </div>
             </div>
         )

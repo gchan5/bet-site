@@ -10,7 +10,6 @@ class BetCard extends Component {
             color: colors[Math.floor(Math.random() * (colors.length))]
         }
 
-        console.log(this.state.color)
     }
 
     render() {
