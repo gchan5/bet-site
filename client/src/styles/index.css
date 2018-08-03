@@ -51,6 +51,16 @@ body {
     margin-bottom: 5px;
 }
 
+.home-card {
+    margin: .25em .25em;
+    flex: 0 1 24%;
+}
+
+.wrap-cards {
+    display: flex;
+    flex-wrap: wrap
+}
+
 @media (min-width: 1000px) {
     .button-small {
         width: 75px;
