@@ -51,7 +51,7 @@ class Navbar extends Component {
             <header className="navbar navbar-expand-lg navbar-dark sticky purple-bg">
                 <div className='container'>
                     <Link to='/'>
-                        <span className="navbar-brand mb-0 h1">BetSite</span>
+                        <span className="navbar-brand mb-0 h1">Simply Betting</span>
                     </Link>
                     {this.checkUser()}
                 </div>

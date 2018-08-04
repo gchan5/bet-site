@@ -62,6 +62,7 @@ module.exports = function(app) {
 
         bet.save().then(function(savedBet) {
             User.update({ _id: savedBet.owner}, { $addToSet : { "ownedBets" : savedBet._id } }).exec();
+            User.update({ _id: savedBet.oracle }, { $addToSet : { "oracledBets" : savedBet._id } })
 
             id = savedBet._id;
         });
