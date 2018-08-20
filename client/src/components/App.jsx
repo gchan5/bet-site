@@ -5,6 +5,7 @@ import Home from './Home';
 import LoginPage from './LoginPage';
 import SignupPage from './SignupPage';
 import NewBetPage from './NewBetPage';
+import BetPage from './BetPage';
 
 class App extends Component {
     constructor(props) {
@@ -41,6 +42,7 @@ class App extends Component {
                     <Route path='/login' component={LoginPage} />
                     <Route path='/signup' component={SignupPage} />
                     <Route path='/new-bet' component={NewBetPage} />
+                    <Route path='/bet' component={BetPage} />
                     <Route path='/' component={Home} />
                     <Route component={Home} />
                 </Switch>

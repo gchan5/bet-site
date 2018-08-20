@@ -61,6 +61,7 @@ class Home extends Component {
                                         key={place}
                                         name={bet.name}
                                         description={bet.description}
+                                        id={bet._id}
                                     />
                                 )
                             })

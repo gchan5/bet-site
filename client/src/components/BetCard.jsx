@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 class BetCard extends Component {
     constructor(props) {
@@ -14,12 +15,14 @@ class BetCard extends Component {
 
     render() {
         return (
-            <div className={"card text-white home-card border-" + this.state.color}>
-                <div className={"card-body text-" + this.state.color}>
-                    <h5 className="card-title">{this.props.name}</h5>
-                    <p className="card-text">{this.props.description}</p>
+            <Link to={"/bet?id=" + this.props.id.toString()}>
+                <div className={"card text-white home-card border-" + this.state.color}>
+                    <div className={"card-body text-" + this.state.color}>
+                        <h5 className="card-title">{this.props.name}</h5>
+                        <p className="card-text">{this.props.description}</p>
+                    </div>
                 </div>
-            </div>
+            </Link>
         );
     }
 }

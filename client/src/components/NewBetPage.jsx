@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import Navbar from './Navbar';
 import NewBetForm from './NewBetForm';
 
@@ -168,6 +169,10 @@ class NewBetPage extends Component {
         postRequest('/api/bet', bet).then((response) => {
             if(response.ok) {
                 console.log(response);
+                this.setState({
+                    ...this.state,
+                    betCreateSuccess: true
+                });
             } else {
                 this.setState({
                     ...this.state,
@@ -179,6 +184,12 @@ class NewBetPage extends Component {
 
     render() {
         const outcomeFields = this.createOutcomeFields();
+
+        if(this.state.betCreateSuccess) {
+            return(
+                <Redirect to='/' />
+            );
+        }
 
         return (
             <UserContext.Consumer>
